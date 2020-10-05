@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import {connect} from 'react-redux';
 
 import CounterControl from '../../components/CounterControl/CounterControl';
 import CounterOutput from '../../components/CounterOutput/CounterOutput';
@@ -28,14 +29,31 @@ class Counter extends Component {
     render () {
         return (
             <div>
-                <CounterOutput value={this.state.counter} />
-                <CounterControl label="Increment" clicked={() => this.counterChangedHandler( 'inc' )} />
-                <CounterControl label="Decrement" clicked={() => this.counterChangedHandler( 'dec' )}  />
-                <CounterControl label="Add 5" clicked={() => this.counterChangedHandler( 'add', 5 )}  />
-                <CounterControl label="Subtract 5" clicked={() => this.counterChangedHandler( 'sub', 5 )}  />
+                <CounterOutput value={this.props.ctr} />
+                <CounterControl label="Increment" clicked={this.props.incrementDispatcher} />
+                <CounterControl label="Decrement" clicked={this.props.decrementDispatcher}  />
+                <CounterControl label="Add 20" clicked={this.props.addDispatcher}  />
+                <CounterControl label="Subtract 10" clicked={this.props.subtractDispatcher}  />
             </div>
         );
     }
 }
 
-export default Counter;
+// accessing our state stored in redux and using it in our component
+const mapStateToProps = state => {
+    return {
+        ctr: state.counter
+    };
+};
+
+// dispatching actions from within the component to our redux reducer
+const dispatchToReducer = dispatch => {
+    return {
+        incrementDispatcher: () => dispatch({type: 'INCREMENT'}),
+        decrementDispatcher: () => dispatch({type: 'DECREMENT'}),
+        addDispatcher: () => dispatch({type: 'ADD', value: 20}),
+        subtractDispatcher: () => dispatch({type: 'SUBTRACT', value: 10})
+    };
+};
+
+export default connect(mapStateToProps, dispatchToReducer)(Counter);
